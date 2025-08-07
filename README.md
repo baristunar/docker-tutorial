@@ -2,6 +2,24 @@
 
 This project demonstrates how to containerize a Node.js Express API using Docker.
 
+## Table of Contents
+
+- [Project Structure](#project-structure)
+- [Features](#features)
+- [API Endpoints](#api-endpoints)
+- [Requirements](#requirements)
+- [Installation and Setup](#installation-and-setup)
+  - [Using Docker Hub Image](#1-using-docker-hub-image-api-only---fastest)
+  - [Using Docker Compose](#2-using-docker-compose-recommended-for-development)
+  - [Manual Docker Build](#3-manual-docker-build)
+- [Access](#access)
+- [Development](#development)
+- [Docker Commands](#docker-commands)
+- [Technologies](#technologies)
+- [Port Information](#port-information)
+- [Notes](#notes)
+- [What I Learned](#what-i-learned)
+
 ## Project Structure
 
 ```
@@ -51,7 +69,19 @@ docker-tutorial/
 
 ## Installation and Setup
 
-### 1. Using Docker Compose (Recommended)
+### 1. Using Docker Hub Image (API Only - Fastest)
+
+```bash
+# Pull the pre-built API image from Docker Hub
+docker pull baristunardev/myapi-hello-docker
+
+# Run the API container
+docker run --name api_container -p 4000:4000 --rm baristunardev/myapi-hello-docker
+```
+
+**Note:** This option only runs the API service. For the full project with myblog, use options 2 or 3.
+
+### 2. Using Docker Compose (Recommended for Development)
 
 ```bash
 # Clone the project
@@ -65,7 +95,7 @@ docker-compose up --build
 docker-compose up -d --build
 ```
 
-### 2. Manual Docker
+### 3. Manual Docker Build
 
 ```bash
 # Navigate to API folder
@@ -112,6 +142,16 @@ docker exec -it api_c sh
 
 # Clean up images
 docker image prune -a
+
+# Clean up everything (DANGER: Removes all Docker data!)
+docker system prune -a --volumes -f
+
+# Step by step cleanup
+docker stop $(docker ps -aq)           # Stop all containers
+docker rm $(docker ps -aq)             # Remove all containers
+docker rmi -f $(docker images -aq)     # Remove all images
+docker volume prune -f                 # Remove all volumes
+docker network prune -f                # Remove all networks
 ```
 
 ## Technologies
@@ -131,3 +171,35 @@ docker image prune -a
 - Use `CMD ["node", "app.js"]` for production
 - `CMD ["npm", "run", "dev"]` is used for development
 - Alpine Linux base image is used to optimize image size
+
+## What I Learned
+
+Through this Docker tutorial project, I gained hands-on experience with:
+
+### Docker Fundamentals
+- **Dockerfile creation** - Writing efficient multi-stage builds
+- **Image optimization** - Using Alpine Linux to reduce image size
+- **Container management** - Running, stopping, and cleaning up containers
+- **Volume mounting** - Syncing local code with container for development
+
+### Development Workflow
+- **Hot reload setup** - Configuring Nodemon with `-L` flag for Docker
+- **Environment separation** - Different commands for development vs production
+- **Port mapping** - Exposing container ports to host system
+
+### Docker Compose
+- **Multi-container orchestration** - Managing API and other services
+- **Service dependencies** - Linking containers in a network
+- **Volume management** - Handling node_modules and code synchronization
+
+### Best Practices
+- **Layer caching** - Copying package.json first for better build performance
+- **Clean builds** - Using `--build` flag to ensure fresh images
+- **Resource cleanup** - Proper container and image management
+
+### Docker Hub Integration
+- **Image tagging** - Understanding semantic versioning and tag strategies
+- **Registry push/pull** - Publishing and distributing containerized applications
+- **Public repositories** - Sharing projects with the developer community
+
+This project served as a practical introduction to containerization concepts and modern deployment workflows.
